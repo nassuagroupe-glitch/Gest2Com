@@ -16,7 +16,19 @@
     <input asp-for="Reference" />
 
     <label>Catégorie</label>
-    <input asp-for="Categorie" />
+    <select asp-for="Categorie">
+        <option value="">-- Sélectionner --</option>
+        <option value="Ordinateur Portable">Ordinateur Portable</option>
+        <option value="Ordinateur Bureau">Ordinateur Bureau</option>
+        <option value="Imprimante">Imprimante</option>
+        <option value="Écran">Écran</option>
+        <option value="Clavier">Clavier</option>
+        <option value="Souris">Souris</option>
+        <option value="Téléphone &amp; Tablette">Téléphone &amp; Tablette</option>
+        <option value="Réseaux">Réseaux</option>
+        <option value="Chargeur">Chargeur</option>
+        <option value="Batterie">Batterie</option>
+    </select>
 
     <label>Prix d'achat</label>
     <input asp-for="PrixAchat" type="number" step="0.01" />
