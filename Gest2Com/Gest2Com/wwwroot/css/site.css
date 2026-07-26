@@ -1,0 +1,60 @@
+body {
+    font-family: Segoe UI, Arial, sans-serif;
+    margin: 0;
+    color: #1f2937;
+    background-image: linear-gradient(rgba(244, 246, 248, 0.88), rgba(244, 246, 248, 0.88)), url('/img/fond-magasin.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+.site-header { background: #1e3a5f; color: white; padding: 12px 24px; display: flex; align-items: center; gap: 24px; }
+.site-header .logo { color: white; font-weight: bold; font-size: 20px; text-decoration: none; }
+.site-header nav a { color: #cbd5e1; text-decoration: none; margin-right: 16px; }
+.site-header nav a:hover { color: white; }
+.container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.alerte { padding: 10px 16px; border-radius: 4px; margin-bottom: 16px; }
+.alerte-succes { background: #d1fae5; color: #065f46; }
+.alerte-erreur { background: #fee2e2; color: #991b1b; }
+.bouton-principal { display: inline-block; background: #1e3a5f; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; margin-bottom: 16px; }
+.table-donnees { width: 100%; border-collapse: collapse; background: white; }
+.table-donnees th, .table-donnees td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+.ligne-alerte { background: #fff7ed; }
+.grille-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.carte-stat { background: white; padding: 16px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.carte-stat.alerte { border-left: 4px solid #f59e0b; }
+.carte-stat .libelle { display: block; font-size: 13px; color: #6b7280; }
+.carte-stat .valeur { display: block; font-size: 22px; font-weight: bold; }
+.formulaire, .formulaire-vente { display: flex; flex-direction: column; max-width: 420px; background: white; padding: 16px; border-radius: 6px; }
+.formulaire label, .formulaire-vente label { margin-top: 10px; font-size: 13px; color: #374151; }
+.formulaire input, .formulaire select, .formulaire-vente input, .formulaire-vente select { padding: 6px; margin-top: 4px; }
+.formulaire button, .formulaire-vente button { margin-top: 16px; padding: 8px; background: #1e3a5f; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.page-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: linear-gradient(rgba(30, 58, 95, 0.82), rgba(30, 58, 95, 0.82)), url('/img/fond-magasin.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+.carte-login { background: white; padding: 32px; border-radius: 8px; width: 320px; text-align: center; }
+.carte-login h1 { margin-bottom: 0; }
+.carte-login .sous-titre { color: #6b7280; margin-top: 4px; margin-bottom: 20px; }
+.carte-login form { display: flex; flex-direction: column; text-align: left; }
+.carte-login input { padding: 8px; margin-top: 4px; margin-bottom: 12px; }
+.carte-login button { padding: 10px; background: #1e3a5f; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.total { font-size: 18px; font-weight: bold; }
+.barre-recherche { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.barre-recherche input[type="text"] { flex: 1 1 260px; padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 4px; }
+.barre-recherche select { padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 4px; }
+.barre-recherche button { padding: 7px 14px; background: #1e3a5f; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.barre-recherche .lien-effacer { color: #6b7280; text-decoration: none; font-size: 13px; }
+.barre-recherche .lien-effacer:hover { text-decoration: underline; }
+.aucun-resultat { padding: 16px; text-align: center; color: #6b7280; background: white; }
+.input-validation-error { border: 1px solid #991b1b !important; background: #fee2e2; }
+.field-validation-error { color: #991b1b; font-size: 12px; display: block; margin-top: 2px; }
+.field-validation-valid { display: none; }

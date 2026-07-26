@@ -1,0 +1,29 @@
+@model List<Gest2Com.Models.Client>
+@{
+    ViewData["Title"] = "Crédits en cours";
+    Layout = "_Layout";
+}
+
+<h1>Crédits en cours</h1>
+
+<table class="table-donnees">
+    <thead>
+        <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Limite</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var client in Model)
+        {
+            <tr>
+                <td>@client.Nom</td>
+                <td>@client.Telephone</td>
+                <td>@client.SoldeCredit.ToString("N0") F</td>
+                <td>@client.LimiteCredit.ToString("N0") F</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p>Aucun client n'a de crédit en cours actuellement.</p>
+}

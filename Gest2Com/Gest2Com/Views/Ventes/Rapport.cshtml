@@ -1,0 +1,74 @@
+@model Gest2Com.Models.ViewModels.RapportCaisseViewModel
+@{
+    ViewData["Title"] = "Rapport de caisse";
+    Layout = "_Layout";
+}
+
+<h1>Rapport de caisse</h1>
+
+<form method="get" action="/Ventes/Rapport" class="barre-recherche">
+    <label for="debut" style="margin:0;">Du</label>
+    <input type="date" id="debut" name="debut" value="@Model.DateDebut.ToString("yyyy-MM-dd")" />
+    <label for="fin" style="margin:0;">au</label>
+    <input type="date" id="fin" name="fin" value="@Model.DateFin.ToString("yyyy-MM-dd")" />
+    <button type="submit">Générer</button>
+</form>
+
+<div class="grille-stats">
+    <div class="carte-stat">
+        <span class="libelle">CA espèces (@Model.NombreVentesEspeces vente(s))</span>
+        <span class="valeur">@Model.CAEspeces.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat">
+        <span class="libelle">CA crédit (@Model.NombreVentesCredit vente(s))</span>
+        <span class="valeur">@Model.CACredit.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat">
+        <span class="libelle">CA total (@Model.NombreVentesTotal vente(s))</span>
+        <span class="valeur">@Model.CATotal.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat">
+        <span class="libelle">Encaissé en caisse sur la période</span>
+        <span class="valeur">@Model.EncaisseTotal.ToString("N0") F</span>
+    </div>
+</div>
+
+<section>
+    <h3>Détail de l'encaissement réel</h3>
+    <p>
+        Espèces : <strong>@Model.EncaisseEspeces.ToString("N0") F</strong>
+        &nbsp;+&nbsp;
+        Versements sur crédit encaissés dans la période
+        (acomptes et remboursements, quelle que soit la date de la vente d'origine) :
+        <strong>@Model.EncaisseVersementsCredit.ToString("N0") F</strong>
+    </p>
+</section>
+
+<section>
+    <h3>Ventes de la période (@Model.DateDebut.ToString("dd/MM/yyyy") — @Model.DateFin.ToString("dd/MM/yyyy"))</h3>
+    @if (!Model.Ventes.Any())
+    {
+        <div class="aucun-resultat">Aucune vente sur cette période.</div>
+    }
+    else
+    {
+        <table class="table-donnees">
+            <thead>
+                <tr><th>Numéro</th><th>Client</th><th>Type</th><th>Montant</th><th>Statut</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var vente in Model.Ventes)
+                {
+                    <tr>
+                        <td><a href="/Ventes/Details/@vente.Id">@vente.Numero</a></td>
+                        <td>@(vente.Client?.Nom ?? "Client comptoir")</td>
+                        <td>@(vente.TypeVente == "Especes" ? "Espèces" : "Crédit")</td>
+                        <td>@vente.MontantTotal.ToString("N0") F</td>
+                        <td>@vente.Statut</td>
+                        <td>@vente.DateVente.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

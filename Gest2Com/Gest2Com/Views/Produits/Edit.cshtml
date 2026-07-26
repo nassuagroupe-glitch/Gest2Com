@@ -1,0 +1,35 @@
+@model Gest2Com.Models.Produit
+@{
+    ViewData["Title"] = "Modifier le produit";
+    Layout = "_Layout";
+}
+
+<h1>Modifier @Model.Nom</h1>
+
+<form method="post" asp-action="Edit" asp-route-id="@Model.Id" class="formulaire">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <label>Nom</label>
+    <input asp-for="Nom" required />
+
+    <label>Référence</label>
+    <input asp-for="Reference" />
+
+    <label>Catégorie</label>
+    <input asp-for="Categorie" />
+
+    <label>Prix d'achat</label>
+    <input asp-for="PrixAchat" type="number" step="0.01" />
+
+    <label>Prix de vente</label>
+    <input asp-for="PrixVente" type="number" step="0.01" required />
+
+    <label>Quantité en stock</label>
+    <input asp-for="QuantiteStock" type="number" />
+
+    <label>Seuil d'alerte</label>
+    <input asp-for="SeuilAlerte" type="number" />
+
+    <button type="submit">Enregistrer</button>
+</form>

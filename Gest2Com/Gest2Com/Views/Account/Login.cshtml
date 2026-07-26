@@ -1,0 +1,33 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <title>Gest2Com — Connexion</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="page-login">
+    <div class="carte-login">
+        <h1>Gest2Com</h1>
+        <p class="sous-titre">Vente & gestion de stock</p>
+
+        @if (ViewBag.Erreur != null)
+        {
+            <div class="alerte alerte-erreur">@ViewBag.Erreur</div>
+        }
+
+        <form method="post" asp-action="Login">
+            @Html.AntiForgeryToken()
+            <label>Nom d'utilisateur</label>
+            <input type="text" name="nomUtilisateur" required />
+
+            <label>Mot de passe</label>
+            <input type="password" name="motDePasse" required />
+
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</body>
+</html>

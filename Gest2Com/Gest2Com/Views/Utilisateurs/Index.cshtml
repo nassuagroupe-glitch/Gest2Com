@@ -1,0 +1,38 @@
+@model List<Gest2Com.Models.Utilisateur>
+@{
+    ViewData["Title"] = "Utilisateurs";
+    Layout = "_Layout";
+}
+
+<h1>Utilisateurs</h1>
+<a href="/Utilisateurs/Create" class="bouton-principal">+ Nouvel utilisateur</a>
+
+@{
+    var idConnecte = Context.Session.GetInt32("UtilisateurId");
+}
+
+<table class="table-donnees">
+    <thead>
+        <tr><th>Nom d'utilisateur</th><th>Nom complet</th><th>Rôle</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var utilisateur in Model)
+        {
+            <tr>
+                <td>@utilisateur.NomUtilisateur @(utilisateur.Id == idConnecte ? "(vous)" : "")</td>
+                <td>@utilisateur.NomComplet</td>
+                <td>@utilisateur.Role</td>
+                <td>
+                    <a href="/Utilisateurs/Edit/@utilisateur.Id">Modifier</a>
+                    @if (utilisateur.Id != idConnecte)
+                    {
+                        <form action="/Utilisateurs/Delete/@utilisateur.Id" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,60 @@
+@model List<Gest2Com.Models.Vente>
+@{
+    ViewData["Title"] = "Ventes";
+    Layout = "_Layout";
+}
+
+@{
+    var rechercheActuelle = ViewData["Recherche"] as string;
+    var typeActuel = ViewData["TypeFiltre"] as string;
+    var statutActuel = ViewData["StatutFiltre"] as string;
+}
+
+<h1>Ventes</h1>
+<a href="/Ventes/Create" class="bouton-principal">+ Nouvelle vente</a>
+
+<form method="get" action="/Ventes/Index" class="barre-recherche">
+    <input type="text" name="q" placeholder="Rechercher par numéro ou client…" value="@rechercheActuelle" />
+    <select name="type">
+        <option value="">Tous types</option>
+        <option value="Especes" selected="@(typeActuel == "Especes")">Espèces</option>
+        <option value="Credit" selected="@(typeActuel == "Credit")">Crédit</option>
+    </select>
+    <select name="statut">
+        <option value="">Tous statuts</option>
+        <option value="Payee" selected="@(statutActuel == "Payee")">Payée</option>
+        <option value="PartiellementPayee" selected="@(statutActuel == "PartiellementPayee")">Partiellement payée</option>
+        <option value="Impayee" selected="@(statutActuel == "Impayee")">Impayée</option>
+    </select>
+    <button type="submit">Rechercher</button>
+    @if (!string.IsNullOrWhiteSpace(rechercheActuelle) || !string.IsNullOrWhiteSpace(typeActuel) || !string.IsNullOrWhiteSpace(statutActuel))
+    {
+        <a href="/Ventes/Index" class="lien-effacer">Effacer</a>
+    }
+</form>
+
+@if (!Model.Any())
+{
+    <div class="aucun-resultat">Aucune vente ne correspond à cette recherche.</div>
+}
+else
+{
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Numéro</th><th>Client</th><th>Type</th><th>Montant</th><th>Statut</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var vente in Model)
+            {
+                <tr>
+                    <td><a href="/Ventes/Details/@vente.Id">@vente.Numero</a></td>
+                    <td>@(vente.Client?.Nom ?? "Client comptoir")</td>
+                    <td>@(vente.TypeVente == "Especes" ? "Espèces" : "Crédit")</td>
+                    <td>@vente.MontantTotal.ToString("N0") F</td>
+                    <td>@vente.Statut</td>
+                    <td>@vente.DateVente.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

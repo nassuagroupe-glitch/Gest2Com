@@ -1,0 +1,78 @@
+@model Gest2Com.Models.ViewModels.VenteCreationViewModel
+@{
+    ViewData["Title"] = "Nouvelle vente";
+    Layout = "_Layout";
+}
+
+<h1>Nouvelle vente</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alerte alerte-erreur">
+        <ul>
+            @foreach (var erreur in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@erreur.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post" asp-action="Create" class="formulaire-vente">
+    @Html.AntiForgeryToken()
+
+    <label>Type de vente</label>
+    <select name="TypeVente" id="typeVente">
+        <option value="Especes">Espèces</option>
+        <option value="Credit">Crédit</option>
+    </select>
+
+    <div id="blocClient" style="display:none">
+        <label>Client (obligatoire pour une vente à crédit)</label>
+        <select name="ClientId">
+            <option value="">-- Sélectionner --</option>
+            @foreach (var client in Model.ClientsDisponibles)
+            {
+                <option value="@client.Id">@client.Nom (solde actuel : @client.SoldeCredit.ToString("N0") F)</option>
+            }
+        </select>
+
+        <label>Montant versé immédiatement (acompte, optionnel)</label>
+        <input type="number" name="MontantVerseImmediatement" step="0.01" value="0" />
+    </div>
+
+    <h3>Produits</h3>
+    <table id="tableProduits">
+        <thead><tr><th>Produit</th><th>Quantité</th></tr></thead>
+        <tbody>
+            @for (int i = 0; i < 5; i++)
+            {
+                <tr>
+                    <td>
+                        <select name="Lignes[@i].ProduitId">
+                            <option value="">-- Aucun --</option>
+                            @foreach (var produit in Model.ProduitsDisponibles)
+                            {
+                                <option value="@produit.Id">@produit.Nom (@produit.PrixVente.ToString("N0") F — stock: @produit.QuantiteStock)</option>
+                            }
+                        </select>
+                    </td>
+                    <td><input type="number" name="Lignes[@i].Quantite" min="0" value="0" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">Valider la vente</button>
+</form>
+
+<script>
+    // Affiche le bloc client uniquement pour une vente à crédit
+    const selectType = document.getElementById('typeVente');
+    const blocClient = document.getElementById('blocClient');
+    function actualiserAffichage() {
+        blocClient.style.display = selectType.value === 'Credit' ? 'block' : 'none';
+    }
+    selectType.addEventListener('change', actualiserAffichage);
+    actualiserAffichage();
+</script>

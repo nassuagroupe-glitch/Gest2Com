@@ -1,0 +1,48 @@
+@model List<Gest2Com.Models.Produit>
+@{
+    ViewData["Title"] = "Produits";
+    Layout = "_Layout";
+}
+
+<h1>Produits</h1>
+<a href="/Produits/Create" class="bouton-principal">+ Nouveau produit</a>
+
+<form method="get" action="/Produits/Index" class="barre-recherche">
+    <input type="text" name="q" placeholder="Rechercher par nom, référence ou catégorie…" value="@ViewData["Recherche"]" />
+    <button type="submit">Rechercher</button>
+    @if (!string.IsNullOrWhiteSpace((string?)ViewData["Recherche"]))
+    {
+        <a href="/Produits/Index" class="lien-effacer">Effacer</a>
+    }
+</form>
+
+@if (!Model.Any())
+{
+    <div class="aucun-resultat">Aucun produit ne correspond à cette recherche.</div>
+}
+else
+{
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Nom</th><th>Référence</th><th>Prix vente</th><th>Stock</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var produit in Model)
+            {
+                <tr class="@(produit.EstEnAlerte ? "ligne-alerte" : "")">
+                    <td>@produit.Nom</td>
+                    <td>@produit.Reference</td>
+                    <td>@produit.PrixVente.ToString("N0") F</td>
+                    <td>@produit.QuantiteStock @(produit.EstEnAlerte ? "⚠️" : "")</td>
+                    <td>
+                        <a href="/Produits/Edit/@produit.Id">Modifier</a>
+                        <form action="/Produits/Delete/@produit.Id" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" onclick="return confirm('Supprimer ce produit ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

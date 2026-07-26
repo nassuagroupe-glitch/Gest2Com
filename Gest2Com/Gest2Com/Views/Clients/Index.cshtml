@@ -1,0 +1,48 @@
+@model List<Gest2Com.Models.Client>
+@{
+    ViewData["Title"] = "Clients";
+    Layout = "_Layout";
+}
+
+<h1>Clients</h1>
+<a href="/Clients/Create" class="bouton-principal">+ Nouveau client</a>
+
+<form method="get" action="/Clients/Index" class="barre-recherche">
+    <input type="text" name="q" placeholder="Rechercher par nom ou téléphone…" value="@ViewData["Recherche"]" />
+    <button type="submit">Rechercher</button>
+    @if (!string.IsNullOrWhiteSpace((string?)ViewData["Recherche"]))
+    {
+        <a href="/Clients/Index" class="lien-effacer">Effacer</a>
+    }
+</form>
+
+@if (!Model.Any())
+{
+    <div class="aucun-resultat">Aucun client ne correspond à cette recherche.</div>
+}
+else
+{
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Nom</th><th>Téléphone</th><th>Limite crédit</th><th>Solde dû</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var client in Model)
+            {
+                <tr class="@(client.SoldeCredit > 0 ? "ligne-alerte" : "")">
+                    <td>@client.Nom</td>
+                    <td>@client.Telephone</td>
+                    <td>@client.LimiteCredit.ToString("N0") F</td>
+                    <td>@client.SoldeCredit.ToString("N0") F</td>
+                    <td>
+                        <a href="/Clients/Edit/@client.Id">Modifier</a>
+                        <form action="/Clients/Delete/@client.Id" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" onclick="return confirm('Supprimer ce client ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

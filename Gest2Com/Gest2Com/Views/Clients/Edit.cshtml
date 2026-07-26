@@ -1,0 +1,31 @@
+@model Gest2Com.Models.Client
+@{
+    ViewData["Title"] = "Modifier le client";
+    Layout = "_Layout";
+}
+
+<h1>Modifier @Model.Nom</h1>
+
+<form method="post" asp-action="Edit" asp-route-id="@Model.Id" class="formulaire">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="SoldeCredit" />
+
+    <label>Nom</label>
+    <input asp-for="Nom" required />
+
+    <label>Téléphone</label>
+    <input asp-for="Telephone" />
+
+    <label>Adresse</label>
+    <input asp-for="Adresse" />
+
+    <label>Limite de crédit autorisée</label>
+    <input asp-for="LimiteCredit" type="number" step="0.01" />
+
+    <p style="margin-top:10px; color:#6b7280; font-size:13px;">
+        Solde dû actuel : @Model.SoldeCredit.ToString("N0") F (non modifiable ici — mis à jour automatiquement via les ventes et versements)
+    </p>
+
+    <button type="submit">Enregistrer</button>
+</form>

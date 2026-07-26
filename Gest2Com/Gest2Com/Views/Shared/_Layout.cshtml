@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] — Gest2Com</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header class="site-header">
+        <a href="/" class="logo">Gest2Com</a>
+        <nav>
+            <a href="/Home/Index">Tableau de bord</a>
+            <a href="/Produits/Index">Produits</a>
+            <a href="/Ventes/Index">Ventes</a>
+            <a href="/Ventes/Create">Nouvelle vente</a>
+            <a href="/Ventes/Rapport">Rapport de caisse</a>
+            <a href="/Clients/Index">Clients</a>
+            <a href="/Clients/Credits">Crédits en cours</a>
+            <a href="/Clients/Relances">Relances</a>
+            @if (Context.Session.GetString("UtilisateurRole") == "admin")
+            {
+                <a href="/Utilisateurs/Index">Utilisateurs</a>
+            }
+            <a href="/Account/Deconnexion">Déconnexion</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        @if (TempData["Succes"] != null)
+        {
+            <div class="alerte alerte-succes">@TempData["Succes"]</div>
+        }
+        @if (TempData["Erreur"] != null)
+        {
+            <div class="alerte alerte-erreur">@TempData["Erreur"]</div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

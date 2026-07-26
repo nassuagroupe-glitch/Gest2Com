@@ -1,0 +1,50 @@
+@model List<Gest2Com.Models.ViewModels.ClientRelanceViewModel>
+@{
+    ViewData["Title"] = "Relances clients";
+    Layout = "_Layout";
+    var joursSeuil = (int)ViewData["JoursSeuil"]!;
+}
+
+<h1>Relances clients en retard</h1>
+
+<form method="get" action="/Clients/Relances" class="barre-recherche">
+    <label for="jours" style="margin:0;">Retard d'au moins</label>
+    <input type="number" id="jours" name="jours" min="0" value="@joursSeuil" style="width:80px;" />
+    <label for="jours" style="margin:0;">jour(s)</label>
+    <button type="submit">Filtrer</button>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="aucun-resultat">Aucun client n'a de crédit en retard de plus de @joursSeuil jour(s).</div>
+}
+else
+{
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Retard</th><th>Ventes en cours</th><th>Relancer</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var relance in Model)
+            {
+                <tr class="ligne-alerte">
+                    <td>@relance.Nom</td>
+                    <td>@relance.Telephone</td>
+                    <td>@relance.SoldeCredit.ToString("N0") F</td>
+                    <td>@relance.JoursDeRetard jour(s)</td>
+                    <td>@relance.NombreVentesEnCours</td>
+                    <td>
+                        @if (relance.LienWhatsApp != null)
+                        {
+                            <a href="@relance.LienWhatsApp" target="_blank" rel="noopener" class="bouton-principal" style="margin:0; padding:4px 10px;">WhatsApp</a>
+                        }
+                        else
+                        {
+                            <span style="color:#6b7280;">Pas de téléphone</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

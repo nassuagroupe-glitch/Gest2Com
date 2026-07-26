@@ -1,0 +1,60 @@
+@model Gest2Com.Models.ViewModels.TableauBordViewModel
+@{
+    ViewData["Title"] = "Tableau de bord";
+    Layout = "_Layout";
+}
+
+<h1>Tableau de bord</h1>
+
+<div class="grille-stats">
+    <div class="carte-stat">
+        <span class="libelle">CA aujourd'hui</span>
+        <span class="valeur">@Model.ChiffreAffairesJour.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat">
+        <span class="libelle">CA ce mois</span>
+        <span class="valeur">@Model.ChiffreAffairesMois.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat @(Model.TotalCreditsEnCours > 0 ? "alerte" : "")">
+        <span class="libelle">Crédits en cours</span>
+        <span class="valeur">@Model.TotalCreditsEnCours.ToString("N0") F</span>
+    </div>
+    <div class="carte-stat @(Model.ProduitsEnAlerte.Any() ? "alerte" : "")">
+        <span class="libelle">Produits en stock bas</span>
+        <span class="valeur">@Model.ProduitsEnAlerte.Count</span>
+    </div>
+</div>
+
+@if (Model.ProduitsEnAlerte.Any())
+{
+    <section>
+        <h3>⚠️ Produits en stock bas</h3>
+        <ul>
+            @foreach (var produit in Model.ProduitsEnAlerte)
+            {
+                <li>@produit.Nom — reste @produit.QuantiteStock</li>
+            }
+        </ul>
+    </section>
+}
+
+<section>
+    <h3>Dernières ventes</h3>
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Numéro</th><th>Type</th><th>Montant</th><th>Statut</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var vente in Model.DernieresVentes)
+            {
+                <tr>
+                    <td><a href="/Ventes/Details/@vente.Id">@vente.Numero</a></td>
+                    <td>@(vente.TypeVente == "Especes" ? "Espèces" : "Crédit")</td>
+                    <td>@vente.MontantTotal.ToString("N0") F</td>
+                    <td>@vente.Statut</td>
+                    <td>@vente.DateVente.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

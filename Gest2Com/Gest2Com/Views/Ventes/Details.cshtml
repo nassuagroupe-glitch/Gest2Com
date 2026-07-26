@@ -1,0 +1,72 @@
+@model Gest2Com.Models.Vente
+@{
+    ViewData["Title"] = "Vente " + Model.Numero;
+    Layout = "_Layout";
+}
+
+<h1>Vente @Model.Numero</h1>
+<a href="/Ventes/RecuPdf/@Model.Id" class="bouton-principal" target="_blank">Télécharger le reçu (PDF)</a>
+<p>Client : @(Model.Client?.Nom ?? "Client comptoir")</p>
+<p>Type : @(Model.TypeVente == "Especes" ? "Espèces" : "Crédit") — Statut : @Model.Statut</p>
+<p>Vendeur : @Model.VendeurNom — @Model.DateVente.ToString("dd/MM/yyyy HH:mm")</p>
+
+<table class="table-donnees">
+    <thead><tr><th>Produit</th><th>Quantité</th><th>Prix unitaire</th><th>Sous-total</th></tr></thead>
+    <tbody>
+        @foreach (var ligne in Model.Lignes)
+        {
+            <tr>
+                <td>@ligne.NomProduit</td>
+                <td>@ligne.Quantite</td>
+                <td>@ligne.PrixUnitaire.ToString("N0") F</td>
+                <td>@ligne.SousTotal().ToString("N0") F</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p class="total">Total : @Model.MontantTotal.ToString("N0") F</p>
+<p>Payé : @Model.MontantPaye.ToString("N0") F — Restant : @Model.MontantRestant.ToString("N0") F</p>
+
+@if (Model.TypeVente == "Credit" && Model.MontantRestant > 0)
+{
+    <section>
+        <h3>Enregistrer un versement</h3>
+        <form method="post" asp-action="EnregistrerVersement" class="formulaire">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="venteId" value="@Model.Id" />
+
+            <label>Montant</label>
+            <input type="number" name="montant" step="0.01" max="@Model.MontantRestant" required />
+
+            <label>Mode de paiement</label>
+            <select name="modePaiement">
+                <option value="Espèces">Espèces</option>
+                <option value="Mobile Money">Mobile Money</option>
+                <option value="Chèque">Chèque</option>
+            </select>
+
+            <button type="submit">Enregistrer le versement</button>
+        </form>
+    </section>
+}
+
+@if (Model.Paiements.Any())
+{
+    <section>
+        <h3>Historique des versements</h3>
+        <table class="table-donnees">
+            <thead><tr><th>Date</th><th>Montant</th><th>Mode</th></tr></thead>
+            <tbody>
+                @foreach (var paiement in Model.Paiements)
+                {
+                    <tr>
+                        <td>@paiement.DatePaiement.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@paiement.Montant.ToString("N0") F</td>
+                        <td>@paiement.ModePaiement</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}

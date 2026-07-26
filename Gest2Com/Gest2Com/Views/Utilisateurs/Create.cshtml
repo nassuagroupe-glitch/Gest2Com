@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Nouvel utilisateur";
+    Layout = "_Layout";
+}
+
+<h1>Nouvel utilisateur</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alerte alerte-erreur">
+        <ul>
+            @foreach (var erreur in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@erreur.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post" action="/Utilisateurs/Create" class="formulaire">
+    @Html.AntiForgeryToken()
+
+    <label>Nom d'utilisateur</label>
+    <input type="text" name="nomUtilisateur" required />
+
+    <label>Mot de passe</label>
+    <input type="password" name="motDePasse" required />
+
+    <label>Nom complet</label>
+    <input type="text" name="nomComplet" />
+
+    <label>Rôle</label>
+    <select name="role">
+        <option value="vendeur">Vendeur</option>
+        <option value="gerant">Gérant</option>
+        <option value="admin">Administrateur</option>
+    </select>
+
+    <button type="submit">Créer l'utilisateur</button>
+</form>

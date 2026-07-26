@@ -1,0 +1,38 @@
+@model Gest2Com.Models.Utilisateur
+@{
+    ViewData["Title"] = "Modifier l'utilisateur";
+    Layout = "_Layout";
+}
+
+<h1>Modifier @Model.NomUtilisateur</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alerte alerte-erreur">
+        <ul>
+            @foreach (var erreur in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@erreur.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post" action="/Utilisateurs/Edit/@Model.Id" class="formulaire">
+    @Html.AntiForgeryToken()
+
+    <label>Nom d'utilisateur</label>
+    <input type="text" value="@Model.NomUtilisateur" disabled />
+
+    <label>Nom complet</label>
+    <input type="text" name="nomComplet" value="@Model.NomComplet" />
+
+    <label>Rôle</label>
+    <select name="role">
+        <option value="vendeur" selected="@(Model.Role == "vendeur")">Vendeur</option>
+        <option value="gerant" selected="@(Model.Role == "gerant")">Gérant</option>
+        <option value="admin" selected="@(Model.Role == "admin")">Administrateur</option>
+    </select>
+
+    <button type="submit">Enregistrer</button>
+</form>

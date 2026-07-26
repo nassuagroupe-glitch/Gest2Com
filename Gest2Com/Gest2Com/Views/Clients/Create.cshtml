@@ -1,0 +1,25 @@
+@model Gest2Com.Models.Client
+@{
+    ViewData["Title"] = "Nouveau client";
+    Layout = "_Layout";
+}
+
+<h1>Nouveau client</h1>
+
+<form method="post" asp-action="Create" class="formulaire">
+    @Html.AntiForgeryToken()
+
+    <label>Nom</label>
+    <input asp-for="Nom" required />
+
+    <label>Téléphone</label>
+    <input asp-for="Telephone" />
+
+    <label>Adresse</label>
+    <input asp-for="Adresse" />
+
+    <label>Limite de crédit autorisée</label>
+    <input asp-for="LimiteCredit" type="number" step="0.01" />
+
+    <button type="submit">Créer le client</button>
+</form>
