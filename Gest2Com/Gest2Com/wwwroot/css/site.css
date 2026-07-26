@@ -2,7 +2,7 @@ body {
     font-family: Segoe UI, Arial, sans-serif;
     margin: 0;
     color: #1f2937;
-    background-image: linear-gradient(rgba(244, 246, 248, 0.88), rgba(244, 246, 248, 0.88)), url('/img/fond-magasin.jpg');
+    background-image: linear-gradient(rgba(244, 246, 248, 0.45), rgba(244, 246, 248, 0.45)), url('/img/fond-magasin.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -35,7 +35,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-image: linear-gradient(rgba(30, 58, 95, 0.82), rgba(30, 58, 95, 0.82)), url('/img/fond-magasin.jpg');
+    background-image: linear-gradient(rgba(30, 58, 95, 0.55), rgba(30, 58, 95, 0.55)), url('/img/fond-magasin.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
