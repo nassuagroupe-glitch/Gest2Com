@@ -13,7 +13,13 @@ namespace Gest2Com.Controllers
         public AccountController(AuthRepository repository) => _repository = repository;
 
         [HttpGet]
-        public IActionResult Login() => View();
+        public IActionResult Login()
+        {
+            if (HttpContext.Session.GetInt32("UtilisateurId") != null)
+                return RedirectToAction("Index", "Home");
+
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
