@@ -79,14 +79,39 @@ namespace Gest2Com.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RequireRole("admin", "gerant")]
-        public async Task<IActionResult> Edit(int id, Produit produit)
+        public async Task<IActionResult> Edit(int id, Produit produit, IFormFile? image)
         {
             if (id != produit.Id) return BadRequest();
             if (!ModelState.IsValid) return View(produit);
 
+            if (image != null && image.Length > 0)
+            {
+                if (!image.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("", "Le fichier sélectionné n'est pas une image");
+                    return View(produit);
+                }
+
+                var ancienneImage = produit.ImageNomFichier;
+                produit.ImageNomFichier = await EnregistrerImageAsync(image);
+                SupprimerImage(ancienneImage);
+            }
+
             await _repository.ModifierAsync(produit);
             TempData["Succes"] = "Produit mis à jour";
             return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>Supprime le fichier image du disque s'il existe.</summary>
+        private void SupprimerImage(string? nomFichier)
+        {
+            if (string.IsNullOrEmpty(nomFichier)) return;
+
+            var chemin = Path.Combine(_environnement.WebRootPath, "img", "produits", nomFichier);
+            if (System.IO.File.Exists(chemin))
+            {
+                System.IO.File.Delete(chemin);
+            }
         }
 
         [HttpPost]

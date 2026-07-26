@@ -6,9 +6,10 @@
 
 <h1>Modifier @Model.Nom</h1>
 
-<form method="post" asp-action="Edit" asp-route-id="@Model.Id" class="formulaire">
+<form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="formulaire">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ImageNomFichier" />
 
     <label>Nom</label>
     <input asp-for="Nom" required />
@@ -30,6 +31,13 @@
 
     <label>Seuil d'alerte</label>
     <input asp-for="SeuilAlerte" type="number" />
+
+    <label>Image du produit</label>
+    @if (!string.IsNullOrEmpty(Model.ImageNomFichier))
+    {
+        <img src="/img/produits/@Model.ImageNomFichier" alt="@Model.Nom" style="width:80px; height:80px; object-fit:cover; border-radius:4px; display:block; margin-bottom:8px;" />
+    }
+    <input type="file" name="image" accept="image/*" />
 
     <button type="submit">Enregistrer</button>
 </form>
