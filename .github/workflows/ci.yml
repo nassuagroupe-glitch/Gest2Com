@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore Gest2Com/Gest2Com/Gest2Com.csproj
+
+      - name: Build
+        run: dotnet build Gest2Com/Gest2Com/Gest2Com.csproj --no-restore --configuration Release
