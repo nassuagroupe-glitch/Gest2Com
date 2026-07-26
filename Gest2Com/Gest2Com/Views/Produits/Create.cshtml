@@ -6,7 +6,7 @@
 
 <h1>Nouveau produit</h1>
 
-<form method="post" asp-action="Create" class="formulaire">
+<form method="post" asp-action="Create" enctype="multipart/form-data" class="formulaire">
     @Html.AntiForgeryToken()
 
     <label>Nom</label>
@@ -29,6 +29,9 @@
 
     <label>Seuil d'alerte</label>
     <input asp-for="SeuilAlerte" type="number" />
+
+    <label>Image du produit</label>
+    <input type="file" name="image" accept="image/*" />
 
     <button type="submit">Créer le produit</button>
 </form>

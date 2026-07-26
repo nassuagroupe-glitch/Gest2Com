@@ -27,6 +27,9 @@ namespace Gest2Com.Models
         public int QuantiteStock { get; set; }
         public int SeuilAlerte { get; set; } = 5;
 
+        /// <summary>Nom du fichier image dans wwwroot/img/produits/, ou null si aucune image.</summary>
+        public string? ImageNomFichier { get; set; }
+
         public bool EstEnAlerte => QuantiteStock <= SeuilAlerte;
 
         public List<LigneVente> LignesVente { get; set; } = new();

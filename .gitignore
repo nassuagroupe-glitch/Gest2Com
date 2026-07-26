@@ -2,3 +2,5 @@ bin/
 obj/
 *.user
 .vs/
+Gest2Com/Gest2Com/wwwroot/img/produits/
+.claude/scheduled_tasks.lock

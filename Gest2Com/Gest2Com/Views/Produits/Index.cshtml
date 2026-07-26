@@ -24,12 +24,18 @@ else
 {
     <table class="table-donnees">
         <thead>
-            <tr><th>Nom</th><th>Référence</th><th>Prix vente</th><th>Stock</th><th></th></tr>
+            <tr><th></th><th>Nom</th><th>Référence</th><th>Prix vente</th><th>Stock</th><th></th></tr>
         </thead>
         <tbody>
             @foreach (var produit in Model)
             {
                 <tr class="@(produit.EstEnAlerte ? "ligne-alerte" : "")">
+                    <td>
+                        @if (!string.IsNullOrEmpty(produit.ImageNomFichier))
+                        {
+                            <img src="/img/produits/@produit.ImageNomFichier" alt="@produit.Nom" style="width:40px; height:40px; object-fit:cover; border-radius:4px;" />
+                        }
+                    </td>
                     <td>@produit.Nom</td>
                     <td>@produit.Reference</td>
                     <td>@produit.PrixVente.ToString("N0") F</td>
