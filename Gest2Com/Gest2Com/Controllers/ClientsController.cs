@@ -85,7 +85,23 @@ namespace Gest2Com.Controllers
         public async Task<IActionResult> Credits()
         {
             var clients = await _repository.AvecCreditEnCoursAsync();
-            return View(clients);
+            var ventesEnCours = await _venteRepository.ListerCreditsEnCoursAsync();
+            var compteParClient = ventesEnCours
+                .Where(v => v.ClientId != null)
+                .GroupBy(v => v.ClientId!.Value)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var modele = clients.Select(c => new ClientCreditViewModel
+            {
+                ClientId = c.Id,
+                Nom = c.Nom,
+                Telephone = c.Telephone,
+                SoldeCredit = c.SoldeCredit,
+                LimiteCredit = c.LimiteCredit,
+                NombreVentesEnCours = compteParClient.GetValueOrDefault(c.Id)
+            }).ToList();
+
+            return View(modele);
         }
 
         /// <summary>
@@ -110,7 +126,8 @@ namespace Gest2Com.Controllers
                     LimiteCredit = g.Key.LimiteCredit,
                     DateCreditLaPlusAncien = g.Min(v => v.DateVente),
                     NombreVentesEnCours = g.Count(),
-                    JoursDeRetard = (aujourdHui - g.Min(v => v.DateVente)).Days
+                    JoursDeRetard = (aujourdHui - g.Min(v => v.DateVente)).Days,
+                    DateDerniereRelance = g.Key.DateDerniereRelance
                 })
                 .Where(m => m.JoursDeRetard >= jours)
                 .OrderByDescending(m => m.JoursDeRetard)
@@ -118,18 +135,53 @@ namespace Gest2Com.Controllers
 
             foreach (var relance in relances)
             {
-                relance.Message = $"Bonjour {relance.Nom}, ceci est un rappel concernant votre solde de " +
-                    $"{relance.SoldeCredit:N0} F chez nous, en attente depuis {relance.JoursDeRetard} jour(s). " +
-                    "Merci de passer régulariser votre compte dès que possible. Cordialement.";
-
-                var telephoneNettoye = Regex.Replace(relance.Telephone, "[^0-9]", "");
-                relance.LienWhatsApp = string.IsNullOrEmpty(telephoneNettoye)
-                    ? null
-                    : $"https://wa.me/{telephoneNettoye}?text={Uri.EscapeDataString(relance.Message)}";
+                relance.LienWhatsApp = ConstruireLienWhatsApp(relance.Nom, relance.Telephone, relance.SoldeCredit, relance.JoursDeRetard, out var message);
+                relance.Message = message;
             }
 
             ViewData["JoursSeuil"] = jours;
             return View(relances);
+        }
+
+        /// <summary>
+        /// Enregistre la date de relance du client puis redirige vers le lien WhatsApp
+        /// pré-rempli, pour garder trace des relances déjà envoyées.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> EnvoyerRelance(int clientId)
+        {
+            var client = await _repository.ParIdAsync(clientId);
+            if (client == null) return NotFound();
+
+            var joursDeRetard = 0;
+            var venteLaPlusAncienne = (await _venteRepository.ListerCreditsEnCoursAsync())
+                .Where(v => v.ClientId == clientId)
+                .OrderBy(v => v.DateVente)
+                .FirstOrDefault();
+            if (venteLaPlusAncienne != null)
+                joursDeRetard = (DateTime.Today - venteLaPlusAncienne.DateVente).Days;
+
+            var lien = ConstruireLienWhatsApp(client.Nom, client.Telephone, client.SoldeCredit, joursDeRetard, out _);
+            if (lien == null)
+            {
+                TempData["Erreur"] = $"{client.Nom} n'a pas de numéro de téléphone enregistré.";
+                return RedirectToAction(nameof(Relances));
+            }
+
+            await _repository.EnregistrerRelanceAsync(clientId);
+            return Redirect(lien);
+        }
+
+        private static string? ConstruireLienWhatsApp(string nom, string telephone, decimal soldeCredit, int joursDeRetard, out string message)
+        {
+            message = $"Bonjour {nom}, ceci est un rappel concernant votre solde de " +
+                $"{soldeCredit:N0} F chez nous, en attente depuis {joursDeRetard} jour(s). " +
+                "Merci de passer régulariser votre compte dès que possible. Cordialement.";
+
+            var telephoneNettoye = Regex.Replace(telephone, "[^0-9]", "");
+            return string.IsNullOrEmpty(telephoneNettoye)
+                ? null
+                : $"https://wa.me/{telephoneNettoye}?text={Uri.EscapeDataString(message)}";
         }
     }
 }

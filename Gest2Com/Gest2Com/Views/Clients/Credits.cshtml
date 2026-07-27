@@ -1,4 +1,4 @@
-@model List<Gest2Com.Models.Client>
+@model List<Gest2Com.Models.ViewModels.ClientCreditViewModel>
 @{
     ViewData["Title"] = "Crédits en cours";
     Layout = "_Layout";
@@ -8,7 +8,7 @@
 
 <table class="table-donnees">
     <thead>
-        <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Limite</th></tr>
+        <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Limite</th><th>Ventes en cours</th><th></th></tr>
     </thead>
     <tbody>
         @foreach (var client in Model)
@@ -18,6 +18,11 @@
                 <td>@client.Telephone</td>
                 <td>@client.SoldeCredit.ToString("N0") F</td>
                 <td>@client.LimiteCredit.ToString("N0") F</td>
+                <td>@client.NombreVentesEnCours</td>
+                <td>
+                    <a href="/Ventes/Index?clientId=@client.ClientId&type=Credit">Voir les ventes</a>
+                    · <a href="/Clients/Edit/@client.ClientId">Fiche client</a>
+                </td>
             </tr>
         }
     </tbody>

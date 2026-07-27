@@ -46,6 +46,9 @@
                 <option value="Chèque">Chèque</option>
             </select>
 
+            <label>Note (optionnel)</label>
+            <textarea name="notes" rows="2" placeholder="Précision sur ce versement…"></textarea>
+
             <button type="submit">Enregistrer le versement</button>
         </form>
     </section>
@@ -56,7 +59,7 @@
     <section>
         <h3>Historique des versements</h3>
         <table class="table-donnees">
-            <thead><tr><th>Date</th><th>Montant</th><th>Mode</th></tr></thead>
+            <thead><tr><th>Date</th><th>Montant</th><th>Mode</th><th>Encaissé par</th><th>Note</th></tr></thead>
             <tbody>
                 @foreach (var paiement in Model.Paiements)
                 {
@@ -64,6 +67,8 @@
                         <td>@paiement.DatePaiement.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>@paiement.Montant.ToString("N0") F</td>
                         <td>@paiement.ModePaiement</td>
+                        <td>@paiement.UtilisateurNom</td>
+                        <td>@paiement.Notes</td>
                     </tr>
                 }
             </tbody>

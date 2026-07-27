@@ -25,6 +25,9 @@ namespace Gest2Com.Models
 
         public bool PeutEmprunter(decimal montant) => SoldeCredit + montant <= LimiteCredit;
 
+        /// <summary>Date de la dernière relance de crédit envoyée à ce client (WhatsApp).</summary>
+        public DateTime? DateDerniereRelance { get; set; }
+
         public List<Vente> Ventes { get; set; } = new();
     }
 }

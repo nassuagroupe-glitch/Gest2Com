@@ -22,7 +22,7 @@ else
 {
     <table class="table-donnees">
         <thead>
-            <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Retard</th><th>Ventes en cours</th><th>Relancer</th></tr>
+            <tr><th>Client</th><th>Téléphone</th><th>Solde dû</th><th>Retard</th><th>Ventes en cours</th><th>Dernière relance</th><th>Relancer</th></tr>
         </thead>
         <tbody>
             @foreach (var relance in Model)
@@ -33,10 +33,11 @@ else
                     <td>@relance.SoldeCredit.ToString("N0") F</td>
                     <td>@relance.JoursDeRetard jour(s)</td>
                     <td>@relance.NombreVentesEnCours</td>
+                    <td>@(relance.DateDerniereRelance?.ToString("dd/MM/yyyy HH:mm") ?? "Jamais")</td>
                     <td>
                         @if (relance.LienWhatsApp != null)
                         {
-                            <a href="@relance.LienWhatsApp" target="_blank" rel="noopener" class="bouton-principal" style="margin:0; padding:4px 10px;">WhatsApp</a>
+                            <a href="/Clients/EnvoyerRelance/@relance.ClientId" target="_blank" rel="noopener" class="bouton-principal" style="margin:0; padding:4px 10px;">WhatsApp</a>
                         }
                         else
                         {

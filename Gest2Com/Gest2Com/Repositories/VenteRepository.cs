@@ -9,7 +9,7 @@ namespace Gest2Com.Repositories
         private readonly AppDbContext _db;
         public VenteRepository(AppDbContext db) => _db = db;
 
-        public async Task<List<Vente>> ListerToutesAsync(string? recherche = null, string? type = null, string? statut = null)
+        public async Task<List<Vente>> ListerToutesAsync(string? recherche = null, string? type = null, string? statut = null, int? clientId = null)
         {
             var requete = _db.Ventes.Include(v => v.Client).AsQueryable();
 
@@ -23,6 +23,8 @@ namespace Gest2Com.Repositories
                 requete = requete.Where(v => v.TypeVente == type);
             if (!string.IsNullOrWhiteSpace(statut))
                 requete = requete.Where(v => v.Statut == statut);
+            if (clientId != null)
+                requete = requete.Where(v => v.ClientId == clientId);
 
             return await requete.OrderByDescending(v => v.DateVente).ToListAsync();
         }

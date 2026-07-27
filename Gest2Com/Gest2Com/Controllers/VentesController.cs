@@ -34,12 +34,13 @@ namespace Gest2Com.Controllers
             _paiementRepository = paiementRepository;
         }
 
-        public async Task<IActionResult> Index(string? q, string? type, string? statut)
+        public async Task<IActionResult> Index(string? q, string? type, string? statut, int? clientId)
         {
-            var ventes = await _venteRepository.ListerToutesAsync(q, type, statut);
+            var ventes = await _venteRepository.ListerToutesAsync(q, type, statut, clientId);
             ViewData["Recherche"] = q;
             ViewData["TypeFiltre"] = type;
             ViewData["StatutFiltre"] = statut;
+            ViewData["ClientIdFiltre"] = clientId;
             return View(ventes);
         }
 
@@ -167,7 +168,8 @@ namespace Gest2Com.Controllers
                         VenteId = venteId,
                         Montant = vente.MontantPaye,
                         ModePaiement = "Versement initial",
-                        Notes = "Acompte versé à la création de la vente"
+                        Notes = "Acompte versé à la création de la vente",
+                        UtilisateurNom = vente.VendeurNom
                     });
                 }
             }
@@ -228,7 +230,7 @@ namespace Gest2Com.Controllers
         /// <summary>Enregistre un versement supplémentaire sur une vente à crédit.</summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnregistrerVersement(int venteId, decimal montant, string modePaiement)
+        public async Task<IActionResult> EnregistrerVersement(int venteId, decimal montant, string modePaiement, string? notes)
         {
             var vente = await _venteRepository.ParIdAvecDetailsAsync(venteId);
             if (vente == null) return NotFound();
@@ -243,7 +245,9 @@ namespace Gest2Com.Controllers
             {
                 VenteId = venteId,
                 Montant = montant,
-                ModePaiement = modePaiement
+                ModePaiement = modePaiement,
+                Notes = notes ?? string.Empty,
+                UtilisateurNom = HttpContext.Session.GetString("UtilisateurNom") ?? "Vendeur"
             });
 
             var nouveauMontantPaye = vente.MontantPaye + montant;

@@ -17,5 +17,6 @@ namespace Gest2Com.Models.ViewModels
         public int JoursDeRetard { get; set; }
         public string Message { get; set; } = string.Empty;
         public string? LienWhatsApp { get; set; }
+        public DateTime? DateDerniereRelance { get; set; }
     }
 }

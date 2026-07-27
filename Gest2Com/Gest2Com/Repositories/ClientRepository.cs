@@ -59,5 +59,14 @@ namespace Gest2Com.Repositories
             client.SoldeCredit = nouveauSolde;
             await _db.SaveChangesAsync();
         }
+
+        /// <summary>Marque qu'une relance de crédit vient d'être envoyée à ce client.</summary>
+        public async Task EnregistrerRelanceAsync(int clientId)
+        {
+            var client = await _db.Clients.FindAsync(clientId);
+            if (client == null) return;
+            client.DateDerniereRelance = DateTime.Now;
+            await _db.SaveChangesAsync();
+        }
     }
 }

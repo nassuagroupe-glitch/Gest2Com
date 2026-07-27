@@ -8,12 +8,26 @@
     var rechercheActuelle = ViewData["Recherche"] as string;
     var typeActuel = ViewData["TypeFiltre"] as string;
     var statutActuel = ViewData["StatutFiltre"] as string;
+    var clientIdActuel = ViewData["ClientIdFiltre"] as int?;
+    var nomClientFiltre = clientIdActuel != null ? Model.FirstOrDefault(v => v.ClientId == clientIdActuel)?.Client?.Nom : null;
 }
 
 <h1>Ventes</h1>
 <a href="/Ventes/Create" class="bouton-principal">+ Nouvelle vente</a>
 
+@if (clientIdActuel != null)
+{
+    <div class="aucun-resultat" style="background:#eff6ff; color:#1e3a8a;">
+        Ventes de @(nomClientFiltre ?? "ce client") uniquement —
+        <a href="/Ventes/Index">voir toutes les ventes</a>
+    </div>
+}
+
 <form method="get" action="/Ventes/Index" class="barre-recherche">
+    @if (clientIdActuel != null)
+    {
+        <input type="hidden" name="clientId" value="@clientIdActuel" />
+    }
     <input type="text" name="q" placeholder="Rechercher par numéro ou client…" value="@rechercheActuelle" />
     <select name="type">
         <option value="">Tous types</option>

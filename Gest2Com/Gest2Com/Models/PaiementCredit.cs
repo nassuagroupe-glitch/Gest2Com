@@ -19,5 +19,8 @@ namespace Gest2Com.Models
         public string ModePaiement { get; set; } = "Espèces";
         public DateTime DatePaiement { get; set; } = DateTime.Now;
         public string Notes { get; set; } = string.Empty;
+
+        /// <summary>Utilisateur ayant encaissé ce versement (traçabilité de caisse).</summary>
+        public string UtilisateurNom { get; set; } = string.Empty;
     }
 }
