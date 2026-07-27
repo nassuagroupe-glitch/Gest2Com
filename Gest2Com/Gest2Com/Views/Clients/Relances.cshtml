@@ -37,7 +37,12 @@ else
                     <td>
                         @if (relance.LienWhatsApp != null)
                         {
-                            <a href="/Clients/EnvoyerRelance/@relance.ClientId" target="_blank" rel="noopener" class="bouton-principal" style="margin:0; padding:4px 10px;">WhatsApp</a>
+                            <form method="post" action="/Clients/EnvoyerRelance" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="clientId" value="@relance.ClientId" />
+                                <button type="submit" class="bouton-principal" style="margin:0; padding:4px 10px;">Relancer (WhatsApp)</button>
+                            </form>
+                            <a href="@relance.LienWhatsApp" target="_blank" rel="noopener" style="margin-left:6px; font-size:0.85em;">Ouvrir manuellement</a>
                         }
                         else
                         {

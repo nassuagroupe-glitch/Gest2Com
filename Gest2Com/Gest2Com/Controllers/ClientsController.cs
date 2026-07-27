@@ -1,24 +1,30 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Gest2Com.Filters;
 using Gest2Com.Models;
 using Gest2Com.Models.ViewModels;
 using Gest2Com.Repositories;
+using Gest2Com.Services;
 
 namespace Gest2Com.Controllers
 {
     [RequireConnexion]
     public class ClientsController : Controller
     {
-        private const int JOURS_RETARD_PAR_DEFAUT = 30;
-
         private readonly ClientRepository _repository;
         private readonly VenteRepository _venteRepository;
+        private readonly RelanceCreditService _relanceService;
+        private readonly IWhatsAppSender _whatsAppSender;
 
-        public ClientsController(ClientRepository repository, VenteRepository venteRepository)
+        public ClientsController(
+            ClientRepository repository,
+            VenteRepository venteRepository,
+            RelanceCreditService relanceService,
+            IWhatsAppSender whatsAppSender)
         {
             _repository = repository;
             _venteRepository = venteRepository;
+            _relanceService = relanceService;
+            _whatsAppSender = whatsAppSender;
         }
 
         public async Task<IActionResult> Index(string? q)
@@ -109,79 +115,44 @@ namespace Gest2Com.Controllers
         /// le délai indiqué, avec un message et un lien WhatsApp prêts à envoyer.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Relances(int jours = JOURS_RETARD_PAR_DEFAUT)
+        public async Task<IActionResult> Relances(int jours = RelanceCreditService.JOURS_RETARD_PAR_DEFAUT)
         {
-            var aujourdHui = DateTime.Today;
-            var ventesEnCours = await _venteRepository.ListerCreditsEnCoursAsync();
-
-            var relances = ventesEnCours
-                .Where(v => v.Client != null)
-                .GroupBy(v => v.Client!)
-                .Select(g => new ClientRelanceViewModel
-                {
-                    ClientId = g.Key.Id,
-                    Nom = g.Key.Nom,
-                    Telephone = g.Key.Telephone,
-                    SoldeCredit = g.Key.SoldeCredit,
-                    LimiteCredit = g.Key.LimiteCredit,
-                    DateCreditLaPlusAncien = g.Min(v => v.DateVente),
-                    NombreVentesEnCours = g.Count(),
-                    JoursDeRetard = (aujourdHui - g.Min(v => v.DateVente)).Days,
-                    DateDerniereRelance = g.Key.DateDerniereRelance
-                })
-                .Where(m => m.JoursDeRetard >= jours)
-                .OrderByDescending(m => m.JoursDeRetard)
-                .ToList();
-
-            foreach (var relance in relances)
-            {
-                relance.LienWhatsApp = ConstruireLienWhatsApp(relance.Nom, relance.Telephone, relance.SoldeCredit, relance.JoursDeRetard, out var message);
-                relance.Message = message;
-            }
-
+            var relances = await _relanceService.ObtenirRelancesEligiblesAsync(jours);
             ViewData["JoursSeuil"] = jours;
             return View(relances);
         }
 
         /// <summary>
-        /// Enregistre la date de relance du client puis redirige vers le lien WhatsApp
-        /// pré-rempli, pour garder trace des relances déjà envoyées.
+        /// Envoie la relance WhatsApp au client via Twilio et enregistre la date de
+        /// relance (uniquement en cas de succès), pour garder trace des relances déjà envoyées.
         /// </summary>
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnvoyerRelance(int clientId)
         {
             var client = await _repository.ParIdAsync(clientId);
             if (client == null) return NotFound();
 
-            var joursDeRetard = 0;
             var venteLaPlusAncienne = (await _venteRepository.ListerCreditsEnCoursAsync())
                 .Where(v => v.ClientId == clientId)
                 .OrderBy(v => v.DateVente)
                 .FirstOrDefault();
-            if (venteLaPlusAncienne != null)
-                joursDeRetard = (DateTime.Today - venteLaPlusAncienne.DateVente).Days;
+            var joursDeRetard = venteLaPlusAncienne != null
+                ? (DateTime.Today - venteLaPlusAncienne.DateVente).Days
+                : 0;
 
-            var lien = ConstruireLienWhatsApp(client.Nom, client.Telephone, client.SoldeCredit, joursDeRetard, out _);
-            if (lien == null)
+            var message = RelanceCreditService.ConstruireMessage(client.Nom, client.SoldeCredit, joursDeRetard);
+            var (succes, erreur) = await _whatsAppSender.EnvoyerAsync(client.Telephone, message);
+
+            if (!succes)
             {
-                TempData["Erreur"] = $"{client.Nom} n'a pas de numéro de téléphone enregistré.";
+                TempData["Erreur"] = $"Échec de l'envoi WhatsApp à {client.Nom} : {erreur}";
                 return RedirectToAction(nameof(Relances));
             }
 
             await _repository.EnregistrerRelanceAsync(clientId);
-            return Redirect(lien);
-        }
-
-        private static string? ConstruireLienWhatsApp(string nom, string telephone, decimal soldeCredit, int joursDeRetard, out string message)
-        {
-            message = $"Bonjour {nom}, ceci est un rappel concernant votre solde de " +
-                $"{soldeCredit:N0} F chez nous, en attente depuis {joursDeRetard} jour(s). " +
-                "Merci de passer régulariser votre compte dès que possible. Cordialement.";
-
-            var telephoneNettoye = Regex.Replace(telephone, "[^0-9]", "");
-            return string.IsNullOrEmpty(telephoneNettoye)
-                ? null
-                : $"https://wa.me/{telephoneNettoye}?text={Uri.EscapeDataString(message)}";
+            TempData["Succes"] = $"Relance envoyée à {client.Nom}";
+            return RedirectToAction(nameof(Relances));
         }
     }
 }

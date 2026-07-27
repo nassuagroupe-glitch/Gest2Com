@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Gest2Com.Data;
 using Gest2Com.Repositories;
+using Gest2Com.Services;
 using QuestPDF.Infrastructure;
 
 QuestPDF.Settings.License = LicenseType.Community;
@@ -20,6 +21,11 @@ builder.Services.AddScoped<VenteRepository>();
 builder.Services.AddScoped<PaiementCreditRepository>();
 builder.Services.AddScoped<MouvementStockRepository>();
 builder.Services.AddScoped<AuthRepository>();
+
+// Relances de crédit automatiques via WhatsApp (Twilio)
+builder.Services.AddScoped<RelanceCreditService>();
+builder.Services.AddScoped<IWhatsAppSender, TwilioWhatsAppSender>();
+builder.Services.AddHostedService<RelanceAutomatiqueService>();
 
 builder.Services.AddControllersWithViews();
 
