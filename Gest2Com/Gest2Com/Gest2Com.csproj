@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Gest2Com</RootNamespace>
+    <UserSecretsId>f61bc4d4-02cd-4434-86e1-a2b1078269c9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
