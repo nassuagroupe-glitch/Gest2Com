@@ -34,7 +34,7 @@ body {
 .carte-stat .libelle { display: block; font-size: 13px; color: #6b7280; }
 .carte-stat .valeur { display: block; font-size: 22px; font-weight: bold; }
 .formulaire, .formulaire-vente { display: flex; flex-direction: column; max-width: 420px; background: white; padding: 16px; border-radius: 6px; }
-.formulaire-vente { max-width: 700px; }
+.formulaire-vente { max-width: 900px; }
 .formulaire label, .formulaire-vente label { margin-top: 10px; font-size: 13px; color: #374151; }
 .formulaire input, .formulaire select, .formulaire-vente input, .formulaire-vente select { padding: 6px; margin-top: 4px; }
 .formulaire-vente #tableProduits { width: 100%; border-collapse: collapse; margin-top: 8px; table-layout: fixed; }
