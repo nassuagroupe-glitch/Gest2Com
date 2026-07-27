@@ -53,6 +53,9 @@ namespace Gest2Com.Repositories
         public async Task<int> NombreAdminsAsync() =>
             await _db.Utilisateurs.CountAsync(u => u.Role == "admin");
 
+        public async Task<int> NombreUtilisateursAsync() =>
+            await _db.Utilisateurs.CountAsync();
+
         public async Task ModifierRoleAsync(int id, string nomComplet, string role)
         {
             var utilisateur = await _db.Utilisateurs.FindAsync(id);

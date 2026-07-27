@@ -1,0 +1,44 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <title>Gest2Com — Premier démarrage</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="page-login">
+    <div class="carte-login">
+        <h1>Bienvenue</h1>
+        <p class="sous-titre">Créez le compte administrateur pour démarrer</p>
+
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alerte alerte-erreur">
+                @foreach (var erreur in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@erreur.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <form method="post" asp-action="PremierAdmin">
+            @Html.AntiForgeryToken()
+            <label>Nom complet</label>
+            <input type="text" name="nomComplet" required />
+
+            <label>Nom d'utilisateur</label>
+            <input type="text" name="nomUtilisateur" required />
+
+            <label>Mot de passe</label>
+            <input type="password" name="motDePasse" required />
+
+            <label>Confirmer le mot de passe</label>
+            <input type="password" name="confirmationMotDePasse" required />
+
+            <button type="submit">Créer le compte et démarrer</button>
+        </form>
+    </div>
+</body>
+</html>
