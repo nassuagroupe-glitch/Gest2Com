@@ -27,6 +27,13 @@ namespace Gest2Com.Controllers
             return View(produits);
         }
 
+        /// <summary>Liste simplifiée : uniquement le nom et la quantité restante de chaque produit.</summary>
+        public async Task<IActionResult> Quantites()
+        {
+            var produits = await _repository.ListerTousAsync();
+            return View(produits);
+        }
+
         [HttpGet]
         [RequireRole("admin", "gerant")]
         public IActionResult Create() => View(new Produit());

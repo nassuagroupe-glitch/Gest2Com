@@ -1,0 +1,29 @@
+@model List<Gest2Com.Models.Produit>
+@{
+    ViewData["Title"] = "Quantité des produits restant";
+    Layout = "_Layout";
+}
+
+<h1>Quantité des produits restant</h1>
+
+@if (!Model.Any())
+{
+    <div class="aucun-resultat">Aucun produit enregistré.</div>
+}
+else
+{
+    <table class="table-donnees">
+        <thead>
+            <tr><th>Produit</th><th>Quantité restante</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var produit in Model)
+            {
+                <tr class="@(produit.EstEnAlerte ? "ligne-alerte" : "")">
+                    <td>@produit.Nom</td>
+                    <td>@produit.QuantiteStock @(produit.EstEnAlerte ? "⚠️" : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
